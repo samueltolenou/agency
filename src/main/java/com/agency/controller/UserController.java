@@ -50,7 +50,7 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/me")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') ")
+    @PreAuthorize(" hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN') ")
     @ApiOperation(value = "This ressource is used to get connected user details. ADMIN or USER account is necessary to master this operation..")
     public User getCurrentUser(@CurrentUser UserPrincipal currentUser) {
         //UserSummary userSummary = new UserSummary(currentUser.getId(), currentUser.getUsername(), currentUser.getName());
@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') ")
+    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN') ")
     @ApiOperation(value = "This ressource is used to retrieve user details based on his id. ADMIN or USER account is necessary to master this operation.")
     public User getCurrentUser(@PathVariable Long id) {
         if(userRepository.findById(id).isPresent()){
@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @GetMapping("/checkUsernameAvailability")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN')")
     @ApiOperation(value = "This ressource is used to check username avalability. ADMIN account is necessary to master this operation.")
     public UserIdentityAvailability checkUsernameAvailability(@RequestParam(value = "username") String username) {
         Boolean isAvailable = !userRepository.existsByUsername(username);
@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/checkEmailAvailability")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN')")
     @ApiOperation(value = "This ressource is used to check email avalability. ADMIN account is necessary to master this operation.")
     public UserIdentityAvailability checkEmailAvailability(@RequestParam(value = "email") String email) {
         Boolean isAvailable = !userRepository.existsByEmail(email);
@@ -169,7 +169,7 @@ public class UserController {
 
     @ApiOperation(value = "This ressource is used to reset user password. ADMIN or USER account is necessary to master this operation.")
     @PostMapping("/reset-password")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') ")
+    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN') ")
     public ResponseEntity<?> resetPassword(@CurrentUser UserPrincipal userPrincipal, @RequestBody ResetPassword resetPassword) {
 
         Optional<User> updateUser = userRepository.findById(userPrincipal.getId());

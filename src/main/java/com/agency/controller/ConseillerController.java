@@ -78,14 +78,12 @@ public class ConseillerController {
 			signUp.setName(conseiller.getNom());
 			signUp.setRoleName("CONSEILLER");
 			signUp.setUsername(conseiller.getEmail());
-			signUp.setPassword(conseiller.getEmail());
+			signUp.setPassword("123456");
 			
 			User user =   authController.enregistreUser(signUp); 
 			user.setConseiller(conseiller) ;
 			
 			userDao.save(user) ; 
-			
-			
 			
 			return ResponseEntity.ok(null);
 			

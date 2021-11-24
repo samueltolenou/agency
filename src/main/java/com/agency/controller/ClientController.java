@@ -1,7 +1,6 @@
 package com.agency.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -10,6 +9,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agency.dao.ClientDao;
 import com.agency.dao.CompteDao;
-import com.agency.exceptions.AppException;
+import com.agency.dao.UserDao;
 import com.agency.model.Client;
 import com.agency.model.Compte;
 import com.agency.model.User;
@@ -42,8 +43,13 @@ public class ClientController {
 	private ClientDao clientDao;
 	@Autowired
 	private CompteDao compteDao;
+	
 	@Autowired
-	private UserController userController;
+	private AuthController authController;
+	@Autowired
+	UserDao userDao;
+	@Autowired
+	private JavaMailSender javaMailSender;
 
 	@GetMapping("/all")
 	@ApiOperation(value = "liste des .")
@@ -114,7 +120,7 @@ public class ClientController {
 		}
 
 	}
-	
+
 	@PostMapping("/update")
 	@ApiOperation(value = " update un client .")
 	@PreAuthorize("hasRole('CONSEILLER')")
@@ -137,13 +143,57 @@ public class ClientController {
 
 	}
 
-
 	@GetMapping("/searchByNumero/{numero}")
 	@ApiOperation(value = "client par le numero de compte.")
 	public ResponseEntity<?> searchByNumero(@PathVariable(value = "numero") String numero) {
 		try {
 
 			return ResponseEntity.ok(compteDao.findFirstByNumCompte(numero).getClient());
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(new ApiResponse(false, "cient no found"), HttpStatus.BAD_REQUEST);
+
+		}
+
+	}
+
+	@GetMapping("/inscription/{numero}")
+	@ApiOperation(value = "inscription d'un client par son numero de compte.")
+	public ResponseEntity<?> inscription(@PathVariable(value = "numero") String numero) {
+		try {
+
+			Client client = compteDao.findFirstByNumCompte(numero).getClient();
+			if (client == null) {
+				return new ResponseEntity<>(new ApiResponse(false, "client no found"), HttpStatus.BAD_REQUEST);
+			}
+			if (userDao.existsByEmail(client.getEmail())) {
+				return new ResponseEntity<>(new ApiResponse(false, "Le client a déjà un compte"),
+						HttpStatus.BAD_REQUEST);
+			}
+
+			SignUpRequest signUp = new SignUpRequest();
+			signUp.setEmail(client.getEmail());
+			signUp.setName(client.getNom());
+			signUp.setRoleName("CLIENT");
+			signUp.setUsername(client.getEmail());
+			signUp.setPassword("123456");
+
+			User user = this.authController.enregistreUser(signUp);
+			user.setClient(client);
+
+			userDao.save(user);
+
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setTo(user.getEmail());
+
+			msg.setSubject("Identifiant d'accès à l'application Agency");
+			msg.setText("Bonjour " + client.getNom() + " \n " + "" + "Votre Login : " + client.getEmail() + "  \n"
+					+ " Votre mot de passe : " + "123456" + "\n"
+					+ "Des votre premiere connexion, pensez a modifier votre mot de passe ");
+
+			javaMailSender.send(msg);
+
+			return ResponseEntity.ok(user);
 
 		} catch (Exception e) {
 			return new ResponseEntity<>(new ApiResponse(false, "cient no found"), HttpStatus.BAD_REQUEST);
