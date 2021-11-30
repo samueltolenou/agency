@@ -44,7 +44,7 @@ public class DataLoadConfig {
 			SignUpRequest signUp = new SignUpRequest();
 			signUp.setEmail("projet.spring.boot@gmail.com");
 			signUp.setName("ADMIN");
-			signUp.setRoleName("ADMIN");
+			signUp.setRoleName("ROLE_ADMIN");
 			signUp.setUsername("ADMIN");
 			signUp.setPassword("admin");
 			

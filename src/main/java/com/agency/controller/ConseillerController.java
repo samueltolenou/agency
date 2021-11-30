@@ -66,7 +66,7 @@ public class ConseillerController {
 
 	@PostMapping("/create")
 	@ApiOperation(value = " ajouter un conseiller .")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> addConseiller(@RequestBody @Valid Conseiller conseiller) {
 
 		try {
@@ -76,7 +76,7 @@ public class ConseillerController {
 			SignUpRequest signUp = new SignUpRequest();
 			signUp.setEmail(conseiller.getEmail());
 			signUp.setName(conseiller.getNom());
-			signUp.setRoleName("CONSEILLER");
+			signUp.setRoleName("ROLE_CONSEILLER");
 			signUp.setUsername(conseiller.getEmail());
 			signUp.setPassword("123456");
 			

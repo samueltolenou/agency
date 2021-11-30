@@ -3,6 +3,7 @@ package com.agency.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
@@ -47,9 +48,13 @@ public class ClientController {
 	@Autowired
 	private AuthController authController;
 	@Autowired
+	private UserController userController;
+	@Autowired
 	UserDao userDao;
 	@Autowired
 	private JavaMailSender javaMailSender;
+	@Autowired 
+	HttpServletRequest req ;
 
 	@GetMapping("/all")
 	@ApiOperation(value = "liste des .")
@@ -88,14 +93,20 @@ public class ClientController {
 
 	@PostMapping("/create")
 	@ApiOperation(value = " ajouter un client .")
-	@PreAuthorize("hasRole('CONSEILLER')")
+	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
 	public ResponseEntity<?> addClient(@RequestBody @Valid NewClient newClient) {
 
 		try {
+			
 
 			Client client = newClient.getClient();
-
-			client = clientDao.saveAndFlush(client);
+			User user = userController.whoami(req) ;
+			
+			if(user != null && user.getConseiller() != null ) {
+				client.setGestionnaire(user.getConseiller()) ;
+			}
+			
+			client = clientDao.save(client);
 
 			Compte compte = newClient.getCompte();
 			compte.setId(null);
@@ -107,6 +118,9 @@ public class ClientController {
 			compte.setNumCompte(num);
 
 			compte = compteDao.save(compte);
+			
+			client.setComptePrincipal(compte) ;
+			clientDao.save(client) ;
 
 			return ResponseEntity.ok(compte);
 
@@ -123,7 +137,7 @@ public class ClientController {
 
 	@PostMapping("/update")
 	@ApiOperation(value = " update un client .")
-	@PreAuthorize("hasRole('CONSEILLER')")
+	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
 	public ResponseEntity<?> updateClient(@RequestBody @Valid Client client) {
 
 		try {

@@ -24,6 +24,11 @@ import lombok.Data;
 
 public class Client implements Serializable {
     
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idClient;
@@ -43,6 +48,9 @@ public class Client implements Serializable {
     private String sexe;
     private String ville;
     private String proffession;
+    
+    @ManyToOne
+    private Compte comptePrincipal ;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<Compte> comptes;

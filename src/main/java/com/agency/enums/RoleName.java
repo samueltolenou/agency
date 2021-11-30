@@ -2,8 +2,8 @@ package com.agency.enums;
 
 
 public enum RoleName {
-	USER,
-    CLIENT,
-    CONSEILLER,
-    ADMIN
+	ROLE_USER,
+	ROLE_CLIENT,
+	ROLE_CONSEILLER,
+	ROLE_ADMIN
 }

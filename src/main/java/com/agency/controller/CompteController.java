@@ -34,7 +34,7 @@ public class CompteController {
 	
 	@PostMapping("/create")
 	@ApiOperation(value = " ajouter un compte à un client .")
-	@PreAuthorize("hasRole('CONSEILLER')")
+	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
 	public ResponseEntity<?> addCompte(@RequestBody @Valid Compte compte) {
 
 		try {

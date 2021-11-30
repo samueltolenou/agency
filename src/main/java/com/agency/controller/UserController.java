@@ -2,11 +2,13 @@ package com.agency.controller;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +30,7 @@ import com.agency.payload.UserIdentityAvailability;
 import com.agency.security.CurrentUser;
 import com.agency.security.UserPrincipal;
 
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -42,6 +45,11 @@ public class UserController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired 
+    HttpServletRequest req ;
+    @Value("${app.jwtSecret}")
+    private String jwtSecret;
+    
 //
 //    @Autowired
 //    MailService mailService;
@@ -49,7 +57,30 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @GetMapping("/me")
+    @GetMapping(value = "/me")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_CLIENT') or hasRole('ROLE_CONSEILLER')")
+    @ApiOperation(value = "${UserController.me}")
+    public User whoami(HttpServletRequest req) {
+       return userRepository.findById(getId(resolveToken(req))).get();
+    }
+    
+    
+    
+    public Long getId(String token) {
+    	String idStr = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    	return Long.valueOf(idStr) ;
+	}
+
+	public String resolveToken(HttpServletRequest req) {
+		String bearerToken = req.getHeader("Authorization");
+		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+			return bearerToken.substring(7);
+		}
+		return null;
+	}
+    
+    
+    @GetMapping("/oldme")
     @PreAuthorize(" hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN') ")
     @ApiOperation(value = "This ressource is used to get connected user details. ADMIN or USER account is necessary to master this operation..")
     public User getCurrentUser(@CurrentUser UserPrincipal currentUser) {
@@ -58,7 +89,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN') ")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_CLIENT') or hasRole('ROLE_CONSEILLER') or hasRole('ROLE_ADMIN') ")
     @ApiOperation(value = "This ressource is used to retrieve user details based on his id. ADMIN or USER account is necessary to master this operation.")
     public User getCurrentUser(@PathVariable Long id) {
         if(userRepository.findById(id).isPresent()){
@@ -69,7 +100,7 @@ public class UserController {
     }
 
     @GetMapping("/checkUsernameAvailability")
-    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_CLIENT') or hasRole('ROLE_CONSEILLER') or hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "This ressource is used to check username avalability. ADMIN account is necessary to master this operation.")
     public UserIdentityAvailability checkUsernameAvailability(@RequestParam(value = "username") String username) {
         Boolean isAvailable = !userRepository.existsByUsername(username);
@@ -77,7 +108,7 @@ public class UserController {
     }
 
     @GetMapping("/checkEmailAvailability")
-    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_CLIENT') or hasRole('ROLE_CONSEILLER') or hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "This ressource is used to check email avalability. ADMIN account is necessary to master this operation.")
     public UserIdentityAvailability checkEmailAvailability(@RequestParam(value = "email") String email) {
         Boolean isAvailable = !userRepository.existsByEmail(email);
@@ -131,7 +162,7 @@ public class UserController {
 
     @PostMapping("/update-user")
     @ApiOperation(value = "This ressource is used to update user account. ADMIN account is necessary to master this operation.")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateUser(@Valid @RequestBody User user) {
 
         User result = null;
@@ -169,7 +200,7 @@ public class UserController {
 
     @ApiOperation(value = "This ressource is used to reset user password. ADMIN or USER account is necessary to master this operation.")
     @PostMapping("/reset-password")
-    @PreAuthorize("hasRole('USER') or hasRole('CLIENT') or hasRole('CONSEILLER') or hasRole('ADMIN') ")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_CLIENT') or hasRole('ROLE_CONSEILLER') or hasRole('ROLE_ADMIN') ")
     public ResponseEntity<?> resetPassword(@CurrentUser UserPrincipal userPrincipal, @RequestBody ResetPassword resetPassword) {
 
         Optional<User> updateUser = userRepository.findById(userPrincipal.getId());

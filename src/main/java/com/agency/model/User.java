@@ -54,7 +54,7 @@ public class User implements Serializable {
 	@JsonIgnore
 	private String password;
 	
-	private Boolean active= false ;
+	private Boolean active= true ;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Role> roles = new HashSet<>();
