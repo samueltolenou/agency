@@ -2,6 +2,8 @@ package com.agency.model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -26,6 +28,7 @@ public class Compte implements Serializable {
     private Boolean decouvert;
     private Date dateCreation ;
     
+    @JsonBackReference
     @ManyToOne
     private Client client;
 

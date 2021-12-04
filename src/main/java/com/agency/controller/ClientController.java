@@ -106,17 +106,21 @@ public class ClientController {
 				client.setGestionnaire(user.getConseiller()) ;
 			}
 			
-			client = clientDao.save(client);
+			 
 
-			Compte compte = newClient.getCompte();
+			Compte compte = client.getComptePrincipal() ;
 			compte.setId(null);
-			compte.setClient(client);
+			
 
 			compte = compteDao.save(compte);
 
 			String num = genererNum(String.valueOf(compte.getId()));
+			
 			compte.setNumCompte(num);
-
+			
+			client = clientDao.save(client);
+			compte.setClient(client);
+			
 			compte = compteDao.save(compte);
 			
 			client.setComptePrincipal(compte) ;

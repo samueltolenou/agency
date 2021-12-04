@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.agency.enums.TypeClient;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
@@ -52,6 +53,7 @@ public class Client implements Serializable {
     @ManyToOne
     private Compte comptePrincipal ;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<Compte> comptes;
     
