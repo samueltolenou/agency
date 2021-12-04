@@ -56,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            "/api/synonym/**",
             "/api/auth/**",
             "/actuator/**",
+            "/api/client/inscription/**"
     };
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {

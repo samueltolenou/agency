@@ -71,6 +71,7 @@ public class ConseillerController {
 
 		try {
 			
+			
 			conseiller = conseillerDao.save(conseiller);
 			
 			SignUpRequest signUp = new SignUpRequest();
@@ -80,12 +81,12 @@ public class ConseillerController {
 			signUp.setUsername(conseiller.getEmail());
 			signUp.setPassword("123456");
 			
-			User user =   authController.enregistreUser(signUp); 
-			user.setConseiller(conseiller) ;
+			User user =   authController.enregistreUserConseiller(signUp,conseiller); 
+			//user.setConseiller(conseiller) ;
 			
-			userDao.save(user) ; 
+			//userDao.save(user) ; 
 			
-			return ResponseEntity.ok(null);
+			return ResponseEntity.ok(user);
 			
 			}catch (ConstraintViolationException e) {
 				return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

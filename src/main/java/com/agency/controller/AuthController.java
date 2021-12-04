@@ -29,6 +29,7 @@ import com.agency.dao.UserDao;
 import com.agency.enums.RoleName;
 import com.agency.enums.StatusMessage;
 import com.agency.exceptions.AppException;
+import com.agency.model.Conseiller;
 import com.agency.model.Role;
 import com.agency.model.User;
 import com.agency.payload.ApiResponse;
@@ -163,6 +164,38 @@ public class AuthController {
 
 	}
 	
+	public User enregistreUserConseiller(@Valid SignUpRequest signUpRequest,Conseiller cons) {
+		try {
+
+			if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+				return null;
+			}
+
+			if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+				return null;
+			}
+
+			// Creating user's account
+			User user = new User(signUpRequest.getName(), signUpRequest.getUsername(), signUpRequest.getEmail(),
+					signUpRequest.getPassword());
+
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+			Role userRole = roleRepository.findByName(RoleName.valueOf(signUpRequest.getRoleName()))
+					.orElseThrow(() -> new AppException("User Role not set."));
+
+			user.setRoles(Collections.singleton(userRole));
+
+			user.setConseiller(cons);
+			user = userRepository.save(user);
+
+			return user ;
+
+		} catch (Exception e) {
+			return null ;
+		}
+
+	}
 	
 	@PostMapping("/sendMail")
 	public ResponseEntity<?> sendMail () {
@@ -183,6 +216,8 @@ public class AuthController {
 	}
 		
 	}
+	
+	
 	
 	
 	

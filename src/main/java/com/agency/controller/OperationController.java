@@ -19,8 +19,7 @@ public class OperationController {
     public List<Operation> listOperation(){
         return operationDao.findAll();
     }
-
-
+  
     @GetMapping("/{id}")
     public Optional<Operation> getOneOperation(@PathVariable Long id){
         return operationDao.findById(id);
@@ -36,4 +35,6 @@ public class OperationController {
         operationDao.deleteById(numOperation);
         return true;
     }
+
+
 }
