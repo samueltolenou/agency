@@ -69,7 +69,9 @@ public class ClientController {
 			return ResponseEntity.ok(clientDao.findByIdClient(id));
 
 		} catch (Exception e) {
-			return new ResponseEntity<>(new ApiResponse(false, "cient no found"), HttpStatus.BAD_REQUEST);
+			
+			e.printStackTrace() ;
+			return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
 
@@ -85,7 +87,7 @@ public class ClientController {
 			return ResponseEntity.ok(clients);
 
 		} catch (Exception e) {
-			return new ResponseEntity<>(new ApiResponse(false, "cient no found"), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
 
@@ -98,7 +100,6 @@ public class ClientController {
 
 		try {
 			
-
 			Client client = newClient.getClient();
 			User user = userController.whoami(req) ;
 			
@@ -133,7 +134,7 @@ public class ClientController {
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			return new ResponseEntity<>(new ApiResponse(false, "Une erreur s'est produite"),
+			return new ResponseEntity<>(new ApiResponse(false,e.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -169,7 +170,7 @@ public class ClientController {
 			return ResponseEntity.ok(compteDao.findFirstByNumCompte(numero).getClient());
 
 		} catch (Exception e) {
-			return new ResponseEntity<>(new ApiResponse(false, "cient no found"), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
 

@@ -7,9 +7,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "TYPE_OPERATION", discriminatorType = DiscriminatorType.STRING, length = 255)
-
 @Data
 @Entity
 public class Operation implements Serializable {
