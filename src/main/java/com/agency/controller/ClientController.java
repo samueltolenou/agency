@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agency.dao.ClientDao;
 import com.agency.dao.CompteDao;
+import com.agency.dao.ConseillerDao;
 import com.agency.dao.UserDao;
 import com.agency.model.Client;
 import com.agency.model.Compte;
+import com.agency.model.Conseiller;
 import com.agency.model.User;
 import com.agency.payload.ApiResponse;
 import com.agency.payload.NewClient;
@@ -37,18 +38,20 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api/client")
 @Api(value = "client ", description = "API d'accès aux ressources relative aux client")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*"/*"192.168.31.45:4200"*/, maxAge = 3600, allowedHeaders = "*")
 public class ClientController {
 
 	@Autowired
 	private ClientDao clientDao;
 	@Autowired
 	private CompteDao compteDao;
+	@Autowired 
+	private ConseillerDao   conseillerDao;
 	
-	@Autowired
-	private AuthController authController;
-	@Autowired
-	private UserController userController;
+//	@Autowired
+//	private AuthController authController;
+//	@Autowired
+//	private UserController userController;
 	@Autowired
 	UserDao userDao;
 	@Autowired
@@ -95,20 +98,26 @@ public class ClientController {
 
 	@PostMapping("/create")
 	@ApiOperation(value = " ajouter un client .")
-	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
+//	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
 	public ResponseEntity<?> addClient(@RequestBody @Valid NewClient newClient) {
 
 		try {
 			
 			Client client = newClient.getClient();
-			User user = userController.whoami(req) ;
 			
-			if(user != null && user.getConseiller() != null ) {
-				client.setGestionnaire(user.getConseiller()) ;
-			}
+			client.setIdClient(null) ;
 			
-			 
+			User user = new User() ;
+//			User user = userController.whoami(req) ;
+			
+//			
+//			if(user != null && user.getConseiller() != null ) {
+//				client.setGestionnaire(user.getConseiller()) ;
+//			}
+			
+			Conseiller conseiller =  this.conseillerDao.findByNom("Conseiller") ;
 
+			client.setGestionnaire(conseiller) ;
 			Compte compte = client.getComptePrincipal() ;
 			compte.setId(null);
 			
@@ -142,7 +151,7 @@ public class ClientController {
 
 	@PostMapping("/update")
 	@ApiOperation(value = " update un client .")
-	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
+//	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
 	public ResponseEntity<?> updateClient(@RequestBody @Valid Client client) {
 
 		try {
@@ -197,7 +206,8 @@ public class ClientController {
 			signUp.setUsername(client.getEmail());
 			signUp.setPassword("123456");
 
-			User user = this.authController.enregistreUser(signUp);
+			User user = new User() ;
+//			User user = this.authController.enregistreUser(signUp);
 			user.setClient(client);
 
 			userDao.save(user);

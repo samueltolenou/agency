@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600,allowedHeaders = "*")
 @RestController
 @RequestMapping(value = "/api/type-compte")
 public class TypeCompteController {
@@ -17,7 +17,14 @@ public class TypeCompteController {
 
     @GetMapping("/list")
     public List<TypeCompte> listTypeCompte(){
-        return typeCompteDao.findAll();
+        try {
+        	System.out.println("****** entre dans try ******") ;
+        	return typeCompteDao.findAll();
+        }catch(Exception e) {
+        	e.printStackTrace();
+        	return null ;
+        }
+    	
     }
 
 

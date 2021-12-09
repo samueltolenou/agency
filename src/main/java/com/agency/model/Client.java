@@ -54,7 +54,7 @@ public class Client implements Serializable {
     private Compte comptePrincipal ;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "client" /*, fetch = FetchType.EAGER*/)
     private List<Compte> comptes;
     
     @ManyToOne

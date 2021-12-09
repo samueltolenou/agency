@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agency.dao.ConseillerDao;
 import com.agency.dao.UserDao;
-import com.agency.model.Client;
 import com.agency.model.Conseiller;
 import com.agency.model.User;
 import com.agency.payload.ApiResponse;
@@ -32,13 +30,13 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api/conseiller")
 @Api(value = "conseiller ", description = "API d'accès aux ressources relative ")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600, allowedHeaders = "*")
 public class ConseillerController {
 	
 	@Autowired 
 	ConseillerDao conseillerDao; 
-	@Autowired
-	private AuthController authController;
+//	@Autowired
+//	private AuthController authController;
 	@Autowired 
 	UserDao userDao;
 	
@@ -66,7 +64,7 @@ public class ConseillerController {
 
 	@PostMapping("/create")
 	@ApiOperation(value = " ajouter un conseiller .")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> addConseiller(@RequestBody @Valid Conseiller conseiller) {
 
 		try {
@@ -81,10 +79,9 @@ public class ConseillerController {
 			signUp.setUsername(conseiller.getEmail());
 			signUp.setPassword("123456");
 			
-			User user =   authController.enregistreUserConseiller(signUp,conseiller); 
-			//user.setConseiller(conseiller) ;
+			User user = new User() ;
+//			User user =   authController.enregistreUserConseiller(signUp,conseiller); 
 			
-			//userDao.save(user) ; 
 			
 			return ResponseEntity.ok(user);
 			

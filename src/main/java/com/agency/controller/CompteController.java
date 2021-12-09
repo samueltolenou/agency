@@ -6,7 +6,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api/compte")
 @Api(value = "compte ", description = "API d'accès aux ressources relative aux compte")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600, allowedHeaders = "*")
 public class CompteController {
 
 	@Autowired
@@ -34,7 +33,7 @@ public class CompteController {
 	
 	@PostMapping("/create")
 	@ApiOperation(value = " ajouter un compte à un client .")
-	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
+//	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
 	public ResponseEntity<?> addCompte(@RequestBody @Valid Compte compte) {
 
 		try {
