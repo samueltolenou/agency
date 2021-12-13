@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Compte implements Serializable {
     private Boolean principal;
     private Boolean cloturer;
     private Boolean decouvert;
-    private Date dateCreation ;
+    private Date dateCreation = new Date();
     
     @JsonBackReference
     @ManyToOne

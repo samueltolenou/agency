@@ -1,6 +1,7 @@
 package com.agency.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +46,7 @@ public class Client implements Serializable {
     @Enumerated(EnumType.STRING)
     private TypeClient typeClient;
     
-    private Date dateNaissance;
+    private LocalDate dateNaissance;
     private String sexe;
     private String ville;
     private String proffession;
@@ -64,6 +65,6 @@ public class Client implements Serializable {
         super();
     }
 
-  
+
    
 }

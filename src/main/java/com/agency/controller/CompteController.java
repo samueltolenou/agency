@@ -56,10 +56,32 @@ public class CompteController {
 		}
 
 	}
-	
-	
-	
-	
+	@PostMapping("/cloturerCompte")
+	@ApiOperation(value = " clôturer un compte à un client .")
+//	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
+	public ResponseEntity<?> cloturerCompte(@RequestBody @Valid Compte compte) {
+
+		try {
+
+			compte = compteDao.findFirstByNumCompte(compte.getNumCompte()) ;
+			compte.setCloturer(true);
+			compte = compteDao.save(compte);
+
+			return ResponseEntity.ok(compte);
+
+		}catch (ConstraintViolationException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			return new ResponseEntity<>( new ApiResponse(false,"Une erreur s'est produite"), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
+
+
+
 	String genererNum(String chaine) {
 		if(chaine.length()>=8) {
 			return chaine.substring(chaine.length()-8);

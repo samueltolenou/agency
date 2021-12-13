@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class CarteBancaire implements Serializable {
     
     @Enumerated(EnumType.STRING)
     private TypeCarte typeCarte;
-    private Date echeance;
+    private LocalDate echeance;
     private String codeCrypto;
     
 

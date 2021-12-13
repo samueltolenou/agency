@@ -2,12 +2,19 @@ package com.agency.model;
 
 import javax.persistence.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Entity
 public class Operation implements Serializable {
 	
@@ -22,13 +29,14 @@ public class Operation implements Serializable {
     private Long id ;
 	
     private Long numOperation;
-    private Date date;
+    private Date date = new Date();
     private Long montant;
     private Boolean signe;
     
-    
+
+    @ManyToOne
     private TypeOperation typeOperation;
-    private Date echeance;
+    private LocalDate echeance;
 
    
     @ManyToOne
@@ -37,16 +45,6 @@ public class Operation implements Serializable {
     @ManyToOne
     private Compte compteCrediteur ;
 
-    public Operation() {
-        super();
-    }
 
-    public Operation(Date date, long montant, Boolean signe, TypeOperation typeOperation, Date echeance) {
-        this.date = date;
-        this.montant = montant;
-        this.signe = signe;
-        this.typeOperation = typeOperation;
-        this.echeance = echeance;
-    }
 
 }
