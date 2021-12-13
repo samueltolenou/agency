@@ -6,11 +6,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.agency.dao.ClientDao;
 import com.agency.dao.CompteDao;
@@ -29,8 +25,31 @@ public class CompteController {
 	@Autowired
 	private ClientDao clientDao;
 	@Autowired
-	private CompteDao compteDao; 
-	
+	private CompteDao compteDao;
+
+	@GetMapping("/getById/{id}")
+	@ApiOperation(value = "compte  par id.")
+	public ResponseEntity<?> getCompteById(@PathVariable(value = "id") Long id) {
+		try {
+			return ResponseEntity.ok(compteDao.findById(id));
+
+		} catch (Exception e) {
+			e.printStackTrace() ;
+			return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("/getByNumCompte/{numCompte}")
+	@ApiOperation(value = "compte  par numCompte.")
+	public ResponseEntity<?> getCompteBynumCompte(@PathVariable(value = "numCompte") String numCompte) {
+		try {
+			return ResponseEntity.ok(compteDao.findByNumCompteIs(numCompte));
+		} catch (Exception e) {
+			e.printStackTrace() ;
+			return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	@PostMapping("/create")
 	@ApiOperation(value = " ajouter un compte à un client .")
 //	@PreAuthorize("hasRole('ROLE_CONSEILLER')")
@@ -39,7 +58,6 @@ public class CompteController {
 		try {
 			
 			compte = compteDao.save(compte) ;
-			
 			String num = genererNum(String.valueOf(compte.getId()));
 			compte.setNumCompte(num) ;
 			
