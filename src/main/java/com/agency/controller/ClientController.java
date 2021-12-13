@@ -121,6 +121,7 @@ public class ClientController {
 			Compte compte = client.getComptePrincipal() ;
 			compte.setId(null);
 			
+			compte.setClient(null) ;
 
 			compte = compteDao.save(compte);
 
