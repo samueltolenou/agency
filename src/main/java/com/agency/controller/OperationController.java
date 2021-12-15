@@ -52,6 +52,7 @@ public class OperationController {
     	try {
         	operation.setId(null) ;
         	operation.setDate(new Date());
+			operation.setCompteDebiteur(null);
 
         	Compte compte = compteDao.findFirstByNumCompte(operation.getCompteCrediteur().getNumCompte()) ;
         	if(compte != null) {
@@ -80,6 +81,7 @@ public class OperationController {
     	try {
         	operation.setId(null) ;
 			operation.setDate(new Date());
+			operation.setCompteCrediteur(null);
 
         	Compte compte = compteDao.findFirstByNumCompte(operation.getCompteDebiteur().getNumCompte()) ;
         	if(compte != null && compte.getSolde() > operation.getMontant()) {

@@ -32,7 +32,7 @@ public class Operation implements Serializable {
     private Date date = new Date();
     private Long montant;
     private Boolean signe;
-    
+    private String typeDeVirement ;
 
     @ManyToOne
     private TypeOperation typeOperation;
